@@ -13,8 +13,15 @@ def main():
 
 @app.route('/add', methods=['POST'])
 def add_inputs():
-    x = int(request.form['x'])
-    y = int(request.form['y'])
-    add.delay(x, y)
-    flash("Your addition job has been submitted.")
+    try:
+        x = int(request.form['x'])
+        y = int(request.form['y'])
+        result = add.delay(x, y)
+        flash(f"Job submitted! Task ID: {result.id[:8]}...")
+    except (ValueError, KeyError):
+        flash("Please enter valid numbers for both X and Y.")
     return redirect('/')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
